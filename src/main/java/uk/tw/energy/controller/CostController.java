@@ -26,16 +26,18 @@ public class CostController {
     private PricePlanService pricePlanService;
 
     @GetMapping("/getCostOfLastWeek/{smartMeterID}")
-    public ResponseEntity<String> getCostOfLastWeek(@PathVariable String smartMeterID) {
+    public ResponseEntity<Integer> getCostOfLastWeek(@PathVariable String smartMeterID) {
         Optional<List<ElectricityReading>> readingsOptional = meterReadingService.getReadings(smartMeterID);
         ArrayList<ElectricityReading> electricityReadings = new ArrayList<>();
         readingsOptional.ifPresent(electricityReadings::addAll);
-        BigDecimal bigDecimal = !electricityReadings.isEmpty()
-                ? electricityReadings.stream()
-                        .map(ElectricityReading::reading)
-                        .reduce(BigDecimal::add)
-                        .get()
-                : BigDecimal.ZERO;
-        return new ResponseEntity<>(bigDecimal.toString(), HttpStatus.OK);
+        Integer avg =null;
+        if (!electricityReadings.isEmpty()){
+            BigDecimal bigDecimal =electricityReadings.stream()
+                    .map(ElectricityReading::reading)
+                    .reduce(BigDecimal::add)
+                    .get();
+            avg = Integer.parseInt(bigDecimal.toString())/electricityReadings.size();
+        }
+        return new ResponseEntity<>(avg, HttpStatus.OK);
     }
 }
