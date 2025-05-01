@@ -30,13 +30,13 @@ public class CostController {
         Optional<List<ElectricityReading>> readingsOptional = meterReadingService.getReadings(smartMeterID);
         ArrayList<ElectricityReading> electricityReadings = new ArrayList<>();
         readingsOptional.ifPresent(electricityReadings::addAll);
-        Integer avg =null;
-        if (!electricityReadings.isEmpty()){
-            BigDecimal bigDecimal =electricityReadings.stream()
+        Integer avg = null;
+        if (!electricityReadings.isEmpty()) {
+            BigDecimal bigDecimal = electricityReadings.stream()
                     .map(ElectricityReading::reading)
                     .reduce(BigDecimal::add)
                     .get();
-            avg = Integer.parseInt(bigDecimal.toString())/electricityReadings.size();
+            avg = Integer.parseInt(bigDecimal.toString()) / electricityReadings.size();
         }
         return new ResponseEntity<>(avg, HttpStatus.OK);
     }
