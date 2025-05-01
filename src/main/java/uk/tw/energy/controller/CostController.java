@@ -26,7 +26,7 @@ public class CostController {
     private PricePlanService pricePlanService;
 
     @GetMapping("/getCostOfLastWeek/{smartMeterID}")
-    public ResponseEntity<Integer> getCostOfLastWeek(@PathVariable String smartMeterID) {
+    public ResponseEntity<String> getCostOfLastWeek(@PathVariable String smartMeterID) {
         Optional<List<ElectricityReading>> readingsOptional = meterReadingService.getReadings(smartMeterID);
         ArrayList<ElectricityReading> electricityReadings = new ArrayList<>();
         readingsOptional.ifPresent(electricityReadings::addAll);
@@ -36,8 +36,9 @@ public class CostController {
                     .map(ElectricityReading::reading)
                     .reduce(BigDecimal::add)
                     .get();
-            avg = Integer.parseInt(bigDecimal.toString()) / electricityReadings.size();
+            avg = (int)Double.parseDouble(bigDecimal.toString()) / electricityReadings.size();
         }
-        return new ResponseEntity<>(avg, HttpStatus.OK);
+        assert avg != null;
+        return new ResponseEntity<>(avg.toString(), HttpStatus.OK);
     }
 }
