@@ -29,10 +29,12 @@ public class CostController {
     private PricePlanService pricePlanService;
 
     @GetMapping("/getCostOfLastWeek/{smartMeterID}")
-    public ResponseEntity<String> getCostOfLastWeek(@PathVariable String smartMeterID) {
-        //        Double avg = getAverage(smartMeterID);
-        String avg = getAverageString(smartMeterID);
-        return new ResponseEntity<>(avg, HttpStatus.OK);
+    public ResponseEntity<Double> getCostOfLastWeek(@PathVariable String smartMeterID) {
+        Double avg = getAverage(smartMeterID);
+        double price = 0.09;
+        double cost = price * avg * 7;
+        //String avg = getAverageString(smartMeterID);
+        return new ResponseEntity<>(cost, HttpStatus.OK);
     }
 
     private Double getAverage(String smartMeterID) {
@@ -58,8 +60,8 @@ public class CostController {
         Double avg = null;
         String result = "";
         Instant instant = Instant.now();
-        Instant instant1 = Instant.now().minus(7, ChronoUnit.DAYS);
-        Instant instant2 = Instant.now().minus(Duration.ofDays(7));
+        Instant instant1 = Instant.now().minus(1, ChronoUnit.MINUTES);
+        Instant instant2 = Instant.now().minus(Duration.ofMinutes(1));
         if (!electricityReadings.isEmpty()) {
             BigDecimal bigDecimal = electricityReadings.stream()
                     .map(ElectricityReading::reading)
